@@ -24,7 +24,11 @@ const navItems = [
   },
 ];
 
-export function Sidebar() {
+interface SidebarProps {
+  onQuickAddClick?: () => void;
+}
+
+export function Sidebar({ onQuickAddClick }: SidebarProps) {
   const pathname = usePathname();
 
   return (
@@ -62,6 +66,7 @@ export function Sidebar() {
       {/* Quick Add Button */}
       <div className="p-4 border-t border-slate-700">
         <Button
+          onClick={onQuickAddClick}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white gap-2"
           size="lg"
         >

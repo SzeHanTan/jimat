@@ -4,16 +4,14 @@ import { useEffect, useState } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus, Edit2, Trash2 } from "lucide-react";
-import { useCategories } from '@/hooks/useCategories';
-import { useExpenses } from '@/hooks/useExpenses';
+import { useExpenseContext } from '@/contexts/ExpenseContext';
 import { AddCategoryModal } from '@/components/modals/AddCategoryModal';
 import { EditCategoryModal } from '@/components/modals/EditCategoryModal';
 import { DeleteConfirmDialog } from '@/components/modals/DeleteConfirmDialog';
 import { Category, CategoryCreate, CategoryUpdate } from '@/types';
 
 export default function CategoriesPage() {
-  const { categories, loading: categoriesLoading, error: categoriesError, fetchCategories, createCategory, updateCategory, deleteCategory } = useCategories();
-  const { expenses, fetchExpenses } = useExpenses();
+  const { categories, categoriesLoading, categoriesError, fetchCategories, createCategory, updateCategory, deleteCategory, expenses, fetchExpenses } = useExpenseContext();
   
   const [mounted, setMounted] = useState(false);
   

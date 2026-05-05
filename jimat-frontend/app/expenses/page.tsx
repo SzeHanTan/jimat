@@ -4,8 +4,7 @@ import { useEffect, useState, useCallback } from 'react';
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
-import { useExpenses } from '@/hooks/useExpenses';
-import { useCategories } from '@/hooks/useCategories';
+import { useExpenseContext } from '@/contexts/ExpenseContext';
 import { AddExpenseModal } from '@/components/modals/AddExpenseModal';
 import { EditExpenseModal } from '@/components/modals/EditExpenseModal';
 import { DeleteConfirmDialog } from '@/components/modals/DeleteConfirmDialog';
@@ -17,8 +16,7 @@ function getCategoryColor(categoryId: number, categories: any[]): string {
 }
 
 export default function ExpensesPage() {
-  const { expenses, loading: expensesLoading, error: expensesError, fetchExpenses, fetchExpensesByDateRange, createExpense, updateExpense, deleteExpense } = useExpenses();
-  const { categories, loading: categoriesLoading, fetchCategories } = useCategories();
+  const { expenses, expensesLoading, expensesError, fetchExpenses, fetchExpensesByDateRange, createExpense, updateExpense, deleteExpense, categories, categoriesLoading, fetchCategories } = useExpenseContext();
   
   const [mounted, setMounted] = useState(false);
   const [filteredExpenses, setFilteredExpenses] = useState<Expense[]>([]);

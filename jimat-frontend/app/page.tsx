@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { Card } from "@/components/ui/card";
 import { ArrowUpRight, TrendingUp, DollarSign, Calendar } from "lucide-react";
-import { useExpenses } from '@/hooks/useExpenses';
-import { useCategories } from '@/hooks/useCategories';
+import { useExpenseContext } from '@/contexts/ExpenseContext';
 import { 
   calculateDashboardStats, 
   getTopCategories, 
@@ -28,8 +27,16 @@ function getCategoryColor(categoryId: number, categories: any[]): string {
 }
 
 export default function Dashboard() {
-  const { expenses, loading: expensesLoading, error: expensesError, fetchExpenses } = useExpenses();
-  const { categories, loading: categoriesLoading, error: categoriesError, fetchCategories } = useCategories();
+  const { 
+    expenses, 
+    expensesLoading, 
+    expensesError, 
+    fetchExpenses,
+    categories, 
+    categoriesLoading, 
+    categoriesError, 
+    fetchCategories 
+  } = useExpenseContext();
   
   const [mounted, setMounted] = useState(false);
 

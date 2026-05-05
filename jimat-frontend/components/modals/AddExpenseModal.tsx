@@ -51,7 +51,14 @@ export function AddExpenseModal({ isOpen, onClose, categories, onSubmit, isLoadi
     }
 
     try {
-      await onSubmit(formData);
+      // Convert amount to number for submission
+      const submitData: ExpenseCreate = {
+        amount: parseFloat(String(formData.amount)),
+        description: formData.description,
+        date: formData.date,
+        category_id: formData.category_id,
+      };
+      await onSubmit(submitData);
       setFormData({
         amount: '',
         description: '',

@@ -32,10 +32,10 @@ class ExpenseCreate(BaseModel):
 
 class ExpenseUpdate(BaseModel):
     """Schema for updating an expense (PUT request body) - all fields optional"""
-    amount: Union[Decimal, None] = None
-    description: Union[str, None] = None
-    date: Union[date, None] = None
-    category_id: Union[int, None] = None
+    amount: Optional[Decimal] = None
+    description: Optional[str] = None
+    date: Optional[str] = None  # Change to string to handle date parsing
+    category_id: Optional[int] = None
 
     model_config = ConfigDict(
         json_schema_extra={

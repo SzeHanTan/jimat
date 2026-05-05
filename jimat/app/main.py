@@ -7,12 +7,15 @@ This file:
 3. Creates database tables on startup
 """
 
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.exceptions import RequestValidationError
+from fastapi.responses import JSONResponse
 from jimat.app.core.config import settings
 from jimat.app.database.session import engine
 from jimat.app.models import Base
 from jimat.app.api.v1.routes import categories, expenses
+import json
 
 
 # Create database tables if they don't exist
@@ -37,6 +40,31 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+
+# Custom exception handler for validation errors
+@app.exception_handler(RequestValidationError)
+async def validation_exception_handler(request: Request, exc: RequestValidationError):
+    """Log detailed validation errors"""
+    print(f"\n=== VALIDATION ERROR ===")
+    print(f"Path: {request.url.path}")
+    print(f"Method: {request.method}")
+    errors = exc.errors()
+    print(f"Raw errors: {json.dumps(errors, indent=2)}")
+    
+    # Try to log the request body if available
+    try:
+        body = await request.body()
+        print(f"Request body: {body.decode() if body else 'empty'}")
+    except:
+        pass
+    
+    print(f"======================\n")
+    
+    return JSONResponse(
+        status_code=422,
+        content={"detail": errors},
+    )
 
 
 # Include routers (endpoints)

@@ -65,10 +65,31 @@ export function EditExpenseModal({ isOpen, onClose, expense, categories, onSubmi
     }
 
     try {
-      await onSubmit(formData);
+      // Convert amount to number and prepare data for submission
+      const submitData: ExpenseUpdate = {
+        amount: parseFloat(String(formData.amount)),
+        description: formData.description,
+        date: formData.date,
+        category_id: formData.category_id,
+      };
+      
+      // Debug logging
+      console.log('Submit data:', JSON.stringify(submitData, null, 2));
+      
+      await onSubmit(submitData);
       onClose();
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to update expense');
+      let errorMessage = 'Failed to update expense';
+      
+      // Handle Pydantic validation errors (array of error objects)
+      if (err.response?.data?.detail && Array.isArray(err.response.data.detail)) {
+        errorMessage = err.response.data.detail[0]?.msg || errorMessage;
+      } else if (err.response?.data?.detail) {
+        errorMessage = err.response.data.detail;
+      }
+      
+      console.log('Error response:', err.response?.data);
+      setError(errorMessage);
     }
   };
 

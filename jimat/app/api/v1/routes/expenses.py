@@ -2,10 +2,11 @@
 Expense API routes (endpoints).
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi import APIRouter, Depends, HTTPException, Query, Request
 from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import date
+import json
 from jimat.app.database.session import get_db
 from jimat.app.schemas.expense import ExpenseCreate, ExpenseUpdate, ExpenseResponse
 from jimat.app.crud import expense as crud_expense
@@ -94,10 +95,23 @@ def update_expense(
     db: Session = Depends(get_db)
 ):
     """Update an existing expense"""
-    expense = crud_expense.update_expense(db, expense_id, expense_in)
-    if not expense:
-        raise HTTPException(status_code=404, detail="Expense not found")
-    return expense
+    try:
+        # Log what we received
+        print(f"Received update request for expense_id: {expense_id}")
+        print(f"Expense update data: {expense_in}")
+        print(f"Type of amount: {type(expense_in.amount)}")
+        print(f"Type of category_id: {type(expense_in.category_id)}")
+        
+        expense = crud_expense.update_expense(db, expense_id, expense_in)
+        if not expense:
+            raise HTTPException(status_code=404, detail="Expense not found")
+        return expense
+    except Exception as e:
+        # Log the error for debugging
+        import traceback
+        error_msg = traceback.format_exc()
+        print(f"Error updating expense: {error_msg}")
+        raise HTTPException(status_code=500, detail=f"Failed to update expense: {str(e)}")
 
 
 @router.delete("/{expense_id}", status_code=204)

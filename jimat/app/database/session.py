@@ -11,7 +11,7 @@ Why we do this:
 
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, Session
-from jimat.app.core.config import settings
+from app.core.config import settings
 
 
 # Create the database engine

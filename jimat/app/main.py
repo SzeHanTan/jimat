@@ -11,10 +11,10 @@ from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
-from jimat.app.core.config import settings
-from jimat.app.database.session import engine
-from jimat.app.models import Base
-from jimat.app.api.v1.routes import categories, expenses
+from app.core.config import settings
+from app.database.session import engine
+from app.models import Base
+from app.api.v1.routes import categories, expenses
 import json
 
 

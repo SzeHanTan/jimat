@@ -7,9 +7,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy.exc import IntegrityError
 from datetime import date
 import json
-from jimat.app.database.session import get_db
-from jimat.app.schemas.expense import ExpenseCreate, ExpenseUpdate, ExpenseResponse
-from jimat.app.crud import expense as crud_expense
+from app.database.session import get_db
+from app.schemas.expense import ExpenseCreate, ExpenseUpdate, ExpenseResponse
+from app.crud import expense as crud_expense
 
 
 router = APIRouter(prefix="/expenses", tags=["expenses"])

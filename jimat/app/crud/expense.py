@@ -4,8 +4,8 @@ CRUD operations for Expense.
 
 from typing import Optional
 from sqlalchemy.orm import Session
-from jimat.app.models.expense import Expense
-from jimat.app.schemas.expense import ExpenseCreate, ExpenseUpdate
+from app.models.expense import Expense
+from app.schemas.expense import ExpenseCreate, ExpenseUpdate
 
 
 def create_expense(db: Session, expense_in: ExpenseCreate) -> Expense:

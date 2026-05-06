@@ -8,7 +8,7 @@ Why we use Numeric instead of Float:
 
 from sqlalchemy import Column, Integer, Numeric, String, Date, DateTime, ForeignKey, func
 from sqlalchemy.orm import relationship
-from jimat.app.models import Base
+from app.models import Base
 
 
 class Expense(Base):

@@ -9,9 +9,9 @@ Why keep routes separate from CRUD:
 
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
-from jimat.app.database.session import get_db
-from jimat.app.schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse
-from jimat.app.crud import category as crud_category
+from app.database.session import get_db
+from app.schemas.category import CategoryCreate, CategoryUpdate, CategoryResponse
+from app.crud import category as crud_category
 
 
 # Create router for category endpoints

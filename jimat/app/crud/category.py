@@ -4,8 +4,8 @@ CRUD operations for Category.
 
 from typing import Optional
 from sqlalchemy.orm import Session
-from jimat.app.models.category import Category
-from jimat.app.schemas.category import CategoryCreate, CategoryUpdate
+from app.models.category import Category
+from app.schemas.category import CategoryCreate, CategoryUpdate
 
 
 def create_category(db: Session, category_in: CategoryCreate) -> Category:

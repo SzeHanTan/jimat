@@ -1,0 +1,40 @@
+fastapi==0.104.1
+uvicorn==0.24.0
+pydantic==2.4.2
+pydantic-settings==2.0.3
+python-multipart==0.0.6
+python-dotenv==1.0.0
+
+# LLM & AI
+langchain==0.1.1
+langgraph==0.0.19
+huggingface-hub==0.17.3
+google-generativeai==0.3.0
+ollama==0.1.0
+
+# Document Processing (OCR)
+pytesseract==0.3.10
+pillow==10.0.1
+opencv-python==4.8.1.78
+
+# Data Processing
+numpy>=1.26.0
+pandas>=2.1.0
+
+# Async & Concurrency
+httpx>=0.24.1
+aiohttp>=3.9.0
+
+# Database & Caching (optional)
+redis==5.0.0
+sqlalchemy==2.0.21
+psycopg2-binary==2.9.9
+
+# Testing
+pytest==7.4.3
+pytest-asyncio==0.21.1
+
+# Development
+black==23.10.0
+flake8==6.1.0
+mypy==1.6.1

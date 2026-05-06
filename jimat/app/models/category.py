@@ -8,7 +8,7 @@ Why we separate models into different files:
 """
 
 from sqlalchemy import Column, Integer, String, DateTime, func
-from jimat.app.models import Base
+from app.models import Base
 
 
 class Category(Base):

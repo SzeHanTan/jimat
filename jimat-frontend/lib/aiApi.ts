@@ -14,7 +14,7 @@ const AI_API_BASE_URL = process.env.NEXT_PUBLIC_AI_API_URL || 'http://localhost:
 
 const aiClient = axios.create({
   baseURL: AI_API_BASE_URL,
-  timeout: 30000, // Longer timeout for AI processing
+  timeout: 60000, // Longer timeout for AI processing (60 seconds)
   headers: {
     'Content-Type': 'application/json',
   },

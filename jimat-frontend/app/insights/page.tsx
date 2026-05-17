@@ -32,12 +32,16 @@ export default function InsightsPage() {
       try {
         setError(null);
 
-        const expenseData: ExpenseData[] = expenses.map((exp) => ({
-          amount: exp.amount,
-          date: exp.date,
-          category: exp.category?.name || 'Unknown',
-          description: exp.description,
-        }));
+        const expenseData: ExpenseData[] = expenses.map((exp) => {
+          // Match category_id to get category name
+          const category = categories.find(c => c.id === exp.category_id);
+          return {
+            amount: exp.amount,
+            date: exp.date,
+            category: category?.name || 'Unknown',
+            description: exp.description,
+          };
+        });
 
         // Get summary
         const summaryResult = await getSummaryData({

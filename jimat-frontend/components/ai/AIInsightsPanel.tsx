@@ -14,10 +14,11 @@ import { ExpenseData, SummaryResponse, PatternsResponse } from '@/lib/aiApi';
 
 interface AIInsightsPanelProps {
   expenses: any[];
+  categories?: any[];
   period?: 'daily' | 'weekly' | 'monthly' | 'yearly';
 }
 
-export function AIInsightsPanel({ expenses, period = 'monthly' }: AIInsightsPanelProps) {
+export function AIInsightsPanel({ expenses, categories = [], period = 'monthly' }: AIInsightsPanelProps) {
   const { getSummaryData, loading: summaryLoading } = useSpendingSummary();
   const { detectSpendingPatterns, loading: patternsLoading } = usePatternDetection();
 
@@ -71,6 +72,48 @@ export function AIInsightsPanel({ expenses, period = 'monthly' }: AIInsightsPane
 
   const isLoading = summaryLoading || patternsLoading;
 
+  // Calculate top category locally from expenses data
+  const calculateTopCategory = () => {
+    if (expenses.length === 0) return null;
+
+    const categoryTotals: Record<string, { total: number; count: number }> = {};
+    let grandTotal = 0;
+
+    expenses.forEach((exp) => {
+      // Match category_id to get category name
+      const category = categories.find(c => c.id === exp.category_id);
+      const categoryName = category?.name || 'Uncategorized';
+      // Convert amount to number in case it's a string
+      const amount = typeof exp.amount === 'string' ? parseFloat(exp.amount) : exp.amount;
+      if (!categoryTotals[categoryName]) {
+        categoryTotals[categoryName] = { total: 0, count: 0 };
+      }
+      categoryTotals[categoryName].total += amount;
+      categoryTotals[categoryName].count += 1;
+      grandTotal += amount;
+    });
+
+    // Find category with highest spending
+    let topCategory = null;
+    let maxSpending = 0;
+
+    Object.entries(categoryTotals).forEach(([category, data]) => {
+      if (data.total > maxSpending) {
+        maxSpending = data.total;
+        topCategory = {
+          category,
+          total: data.total,
+          count: data.count,
+          percentage: grandTotal > 0 ? (data.total / grandTotal) * 100 : 0,
+        };
+      }
+    });
+
+    return topCategory;
+  };
+
+  const topCategory = calculateTopCategory();
+
   return (
     <div className="space-y-4">
       {error && (
@@ -122,22 +165,22 @@ export function AIInsightsPanel({ expenses, period = 'monthly' }: AIInsightsPane
             </div>
           </div>
 
-          {summary.biggest_category && (
+          {topCategory && (
             <div className="mt-4 pt-4 border-t border-gray-200">
               <p className="text-xs font-semibold text-gray-700 mb-2">Top Category</p>
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="font-semibold text-gray-900">{summary.biggest_category.category}</p>
+                  <p className="font-semibold text-gray-900">{topCategory.category}</p>
                   <p className="text-sm text-gray-600">
-                    {summary.biggest_category.count} transactions
+                    {topCategory.count} transactions
                   </p>
                 </div>
                 <div className="text-right">
                   <p className="font-bold text-gray-900">
-                    ${summary.biggest_category.total.toFixed(2)}
+                    ${topCategory.total.toFixed(2)}
                   </p>
                   <p className="text-sm text-gray-600">
-                    {summary.biggest_category.percentage.toFixed(0)}%
+                    {topCategory.percentage.toFixed(0)}%
                   </p>
                 </div>
               </div>

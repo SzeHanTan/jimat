@@ -145,7 +145,7 @@ export default function Dashboard() {
       {expenses.length > 0 && (
         <div>
           <h2 className="text-xl font-semibold text-slate-900 mb-4">AI Insights</h2>
-          <AIInsightsPanel expenses={expenses} period="monthly" />
+          <AIInsightsPanel expenses={expenses} categories={categories} period="monthly" />
         </div>
       )}
 

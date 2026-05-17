@@ -15,7 +15,7 @@ from datetime import datetime
 import time
 
 from app.core.config import get_settings
-from app.api.v1.routes import documents, categorization
+from app.api.v1.routes import documents, categorization, insights
 
 # Configure logging
 logging.basicConfig(
@@ -54,6 +54,7 @@ app.add_middleware(
 # Include routers
 app.include_router(documents.router)
 app.include_router(categorization.router)
+app.include_router(insights.router)
 
 
 @app.middleware("http")

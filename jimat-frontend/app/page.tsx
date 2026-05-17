@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { Card } from "@/components/ui/card";
 import { ArrowUpRight, TrendingUp, DollarSign, Calendar } from "lucide-react";
 import { useExpenseContext } from '@/contexts/ExpenseContext';
+import { AIInsightsPanel } from '@/components/ai';
 import { 
   calculateDashboardStats, 
   getTopCategories, 
@@ -139,6 +140,14 @@ export default function Dashboard() {
           </div>
         </Card>
       </div>
+
+      {/* AI Insights Section */}
+      {expenses.length > 0 && (
+        <div>
+          <h2 className="text-xl font-semibold text-slate-900 mb-4">AI Insights</h2>
+          <AIInsightsPanel expenses={expenses} period="monthly" />
+        </div>
+      )}
 
       {/* Main Content Area */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">

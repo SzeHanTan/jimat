@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { BarChart3, Wallet, Tag, Plus } from 'lucide-react';
+import { BarChart3, Wallet, Tag, Sparkles, Plus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -21,6 +21,11 @@ const navItems = [
     label: 'Categories',
     href: '/categories',
     icon: Tag,
+  },
+  {
+    label: 'AI Insights',
+    href: '/insights',
+    icon: Sparkles,
   },
 ];
 

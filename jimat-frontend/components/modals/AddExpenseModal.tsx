@@ -1,6 +1,6 @@
 /**
  * Add Expense Modal Component
- * Allows users to create a new expense
+ * Allows users to create a new expense with AI features
  */
 
 import { useState } from 'react';
@@ -9,7 +9,9 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ExpenseCreate, Category } from '@/types';
+import { AICategorySuggestion, AIDocumentUpload } from '@/components/ai';
 
 interface AddExpenseModalProps {
   isOpen: boolean;
@@ -73,89 +75,213 @@ export function AddExpenseModal({ isOpen, onClose, categories, onSubmit, isLoadi
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Add New Expense</DialogTitle>
-          <DialogDescription>Create a new expense record</DialogDescription>
+          <DialogDescription>Create a new expense record or scan a receipt</DialogDescription>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {error && (
-            <div className="bg-red-50 border border-red-200 rounded p-3">
-              <p className="text-red-700 text-sm">{error}</p>
+        <Tabs defaultValue="manual" className="w-full">
+          <TabsList className="grid w-full grid-cols-2">
+            <TabsTrigger value="manual">Manual Entry</TabsTrigger>
+            <TabsTrigger value="receipt">📷 Receipt Scan</TabsTrigger>
+          </TabsList>
+
+          <TabsContent value="manual">
+            <form onSubmit={handleSubmit} className="space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded p-3">
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Description
+                </label>
+                <Textarea
+                  placeholder="e.g., Lunch at restaurant"
+                  value={formData.description}
+                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                  className="resize-none"
+                />
+              </div>
+
+              {/* AI Category Suggestion */}
+              {formData.description.trim() && (
+                <AICategorySuggestion
+                  description={formData.description}
+                  amount={formData.amount ? parseFloat(String(formData.amount)) : undefined}
+                  date={formData.date}
+                  onSelectCategory={(category) => {
+                    const categoryId = categories.find(
+                      (c) => c.name.toLowerCase() === category.toLowerCase()
+                    )?.id;
+                    if (categoryId) {
+                      setFormData({ ...formData, category_id: categoryId });
+                    }
+                  }}
+                />
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Amount
+                </label>
+                <Input
+                  type="number"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  value={formData.amount}
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Category
+                </label>
+                <Select
+                  value={String(formData.category_id || 0)}
+                  onValueChange={(value) => {
+                    const id = value ? parseInt(value) : 0;
+                    setFormData({ ...formData, category_id: id });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={String(cat.id)}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Date
+                </label>
+                <Input
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                />
+              </div>
+
+              <div className="flex gap-2 justify-end pt-4">
+                <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
+                  Cancel
+                </Button>
+                <Button type="submit" disabled={isLoading}>
+                  {isLoading ? 'Creating...' : 'Create Expense'}
+                </Button>
+              </div>
+            </form>
+          </TabsContent>
+
+          <TabsContent value="receipt">
+            <div className="space-y-4">
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded p-3">
+                  <p className="text-red-700 text-sm">{error}</p>
+                </div>
+              )}
+
+              <AIDocumentUpload
+                onExtractedText={(text) => {
+                  setFormData({ ...formData, description: text });
+                }}
+                onExtractedData={(data) => {
+                  setFormData({
+                    ...formData,
+                    description: data.description,
+                    amount: data.amount ? String(data.amount) : formData.amount,
+                  });
+                }}
+              />
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Amount
+                </label>
+                <Input
+                  type="number"
+                  placeholder="0.00"
+                  min="0"
+                  step="0.01"
+                  value={formData.amount}
+                  onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
+                />
+              </div>
+
+              {/* AI Category Suggestion for receipt mode */}
+              {formData.description.trim() && (
+                <AICategorySuggestion
+                  description={formData.description}
+                  amount={formData.amount ? parseFloat(String(formData.amount)) : undefined}
+                  date={formData.date}
+                  onSelectCategory={(category) => {
+                    const categoryId = categories.find(
+                      (c) => c.name.toLowerCase() === category.toLowerCase()
+                    )?.id;
+                    if (categoryId) {
+                      setFormData({ ...formData, category_id: categoryId });
+                    }
+                  }}
+                />
+              )}
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Category
+                </label>
+                <Select
+                  value={String(formData.category_id || 0)}
+                  onValueChange={(value) => {
+                    const id = value ? parseInt(value) : 0;
+                    setFormData({ ...formData, category_id: id });
+                  }}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select a category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {categories.map((cat) => (
+                      <SelectItem key={cat.id} value={String(cat.id)}>
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-slate-700 mb-1">
+                  Date
+                </label>
+                <Input
+                  type="date"
+                  value={formData.date}
+                  onChange={(e) => setFormData({ ...formData, date: e.target.value })}
+                />
+              </div>
+
+              <div className="flex gap-2 justify-end pt-4">
+                <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
+                  Cancel
+                </Button>
+                <Button onClick={handleSubmit} disabled={isLoading}>
+                  {isLoading ? 'Creating...' : 'Create Expense'}
+                </Button>
+              </div>
             </div>
-          )}
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Description
-            </label>
-            <Textarea
-              placeholder="e.g., Lunch at restaurant"
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="resize-none"
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Amount
-            </label>
-            <Input
-              type="number"
-              placeholder="0.00"
-              min="0"
-              step="0.01"
-              value={formData.amount}
-              onChange={(e) => setFormData({ ...formData, amount: e.target.value })}
-            />
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Category
-            </label>
-            <Select
-              value={String(formData.category_id || 0)}
-              onValueChange={(value) => {
-                const id = value ? parseInt(value) : 0;
-                setFormData({ ...formData, category_id: id });
-              }}
-            >
-              <SelectTrigger>
-                <SelectValue placeholder="Select a category" />
-              </SelectTrigger>
-              <SelectContent>
-                {categories.map((cat) => (
-                  <SelectItem key={cat.id} value={String(cat.id)}>
-                    {cat.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div>
-            <label className="block text-sm font-medium text-slate-700 mb-1">
-              Date
-            </label>
-            <Input
-              type="date"
-              value={formData.date}
-              onChange={(e) => setFormData({ ...formData, date: e.target.value })}
-            />
-          </div>
-
-          <div className="flex gap-2 justify-end pt-4">
-            <Button type="button" variant="outline" onClick={onClose} disabled={isLoading}>
-              Cancel
-            </Button>
-            <Button type="submit" disabled={isLoading}>
-              {isLoading ? 'Creating...' : 'Create Expense'}
-            </Button>
-          </div>
-        </form>
+          </TabsContent>
+        </Tabs>
       </DialogContent>
     </Dialog>
   );

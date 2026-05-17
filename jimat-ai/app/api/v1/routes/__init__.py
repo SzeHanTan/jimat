@@ -2,5 +2,6 @@
 
 from . import documents
 from . import categorization
+from . import insights
 
-__all__ = ["documents", "categorization"]
+__all__ = ["documents", "categorization", "insights"]
